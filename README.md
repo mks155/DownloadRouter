@@ -9,8 +9,8 @@
 
 - [作者主页](https://mks155.github.io)
 - [GitHub 仓库](https://github.com/mks155/DownloadRouter) — 欢迎 Star，反馈请提 [Issue](https://github.com/mks155/DownloadRouter/issues)
-- [Greasy Fork 安装页](https://greasyfork.org/zh-CN/scripts/595617)
-- [OpenUserJS 安装页](https://openuserjs.org/scripts/mks155/DownloadRouter)
+- [Greasy Fork 安装页](https://greasyfork.org/zh-CN/scripts/598571-%E4%B8%8B%E8%BD%BD%E8%B7%AF%E7%94%B1-download-router)
+- [OpenUserJS 安装页](https://openuserjs.org/scripts/mks155/%E4%B8%8B%E8%BD%BD%E8%B7%AF%E7%94%B1_Download_Router)
 
 ## 功能清单
 
