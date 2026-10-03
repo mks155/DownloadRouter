@@ -3,7 +3,7 @@
 // @namespace    https://github.com/mks155
 // @homepageURL  https://github.com/mks155/DownloadRouter
 // @icon         https://mks155.github.io/assets/svg/downloadrouter.svg
-// @version      1.0.2
+// @version      1.0.3
 // @description  接管浏览器任意下载链接，快速调起分发给迅雷 / 比特彗星等客户端。识别漏网就按住 Alt+右键。 | Take over any download link in the browser, quickly launch and distribute it to clients such as Thunderbolt / BitComet. To identify any missed links, hold down Alt and right-click.
 // @author       mks155
 // @license      MIT
@@ -14,7 +14,6 @@
 // @grant        GM_unregisterMenuCommand
 // @grant        GM_getValue
 // @grant        GM_setValue
-// @grant        GM_info
 // @noframes
 // @updateURL    https://openuserjs.org/meta/mks155/%E4%B8%8B%E8%BD%BD%E8%B7%AF%E7%94%B1_Download_Router.meta.js
 // @downloadURL  https://openuserjs.org/install/mks155/%E4%B8%8B%E8%BD%BD%E8%B7%AF%E7%94%B1_Download_Router.user.js
@@ -25,7 +24,16 @@
 
   const LS_KEY = 'download_router_config';
 
+  // 顶层只取引用不解析；解析推迟到打开设置面板时
+  const SELF_SRC = (document.currentScript && document.currentScript.textContent) || '';
   const META = (typeof GM_info !== 'undefined' && GM_info.script) || {};
+
+  /** 元数据块是版本号与图标的唯一来源。TM 免申请即给 GM_info，其余引擎走自身源码 */
+  function meta(key) {
+    if (key in META) return META[key] || '';
+    const m = SELF_SRC && new RegExp('^[ \\t]*//[ \\t]*@' + key + '[ \\t]+(.+?)[ \\t]*$', 'm').exec(SELF_SRC);
+    return m ? m[1] : '';
+  }
 
   const DEFAULT_CONFIG = {
     launchMethod: 'href', // href | anchor
@@ -631,8 +639,8 @@ ${THEME_VARS}
     return `<div class="backdrop">
   <div class="panel">
     <div class="hd">
-      <img class="logo" src="${esc(META.icon || '')}" alt="">
-      <b>下载路由</b><span class="v">v${esc(META.version || '')}</span>
+      <img class="logo" src="${esc(meta('icon'))}" alt="">
+      <b>下载路由</b><span class="v">v${esc(meta('version'))}</span>
     </div>
 
     <div class="field">
@@ -731,7 +739,7 @@ ${THEME_VARS}
   registerMenus();
 
   window.__downloadRouter = {
-    HANDLERS, CONFIG, META, buildLink, parseLink, launch,
-    isDownloadLink, guessName, openSettings, selftest,
+    HANDLERS, CONFIG, buildLink, parseLink, launch,
+    isDownloadLink, guessName, openSettings, selftest, meta,
   };
 })();
