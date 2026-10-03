@@ -3,7 +3,7 @@
 // @namespace    https://github.com/mks155
 // @homepageURL  https://github.com/mks155/DownloadRouter
 // @icon         https://mks155.github.io/assets/svg/downloadrouter.svg
-// @version      1.0.0
+// @version      1.0.2
 // @description  接管浏览器任意下载链接，快速调起分发给迅雷 / 比特彗星等客户端。识别漏网就按住 Alt+右键。 | Take over any download link in the browser, quickly launch and distribute it to clients such as Thunderbolt / BitComet. To identify any missed links, hold down Alt and right-click.
 // @author       mks155
 // @license      MIT
@@ -14,15 +14,18 @@
 // @grant        GM_unregisterMenuCommand
 // @grant        GM_getValue
 // @grant        GM_setValue
-// @grant        GM_notification
+// @grant        GM_info
 // @noframes
+// @updateURL    https://openuserjs.org/meta/mks155/%E4%B8%8B%E8%BD%BD%E8%B7%AF%E7%94%B1_Download_Router.meta.js
+// @downloadURL  https://openuserjs.org/install/mks155/%E4%B8%8B%E8%BD%BD%E8%B7%AF%E7%94%B1_Download_Router.user.js
 // ==/UserScript==
 
 (() => {
   'use strict';
 
-  const VERSION = '1.0.0';
   const LS_KEY = 'download_router_config';
+
+  const META = (typeof GM_info !== 'undefined' && GM_info.script) || {};
 
   const DEFAULT_CONFIG = {
     launchMethod: 'href', // href | anchor
@@ -51,8 +54,9 @@
   function saveConfig() {
     try {
       GM_setValue(LS_KEY, CONFIG);
+      return true;
     } catch {
-      /* ignore */
+      return false;
     }
   }
 
@@ -225,17 +229,6 @@
     return true;
   }
 
-  function notify(text, kind = '') {
-    console.info(`[下载路由] ${text}`);
-    try {
-      if (typeof GM_notification === 'function') {
-        GM_notification({ title: '下载路由', text, timeout: kind === 'err' ? 6000 : 3000 });
-      }
-    } catch {
-      /* ignore */
-    }
-  }
-
   async function copyText(text) {
     try {
       await navigator.clipboard.writeText(text);
@@ -282,6 +275,68 @@
   --shadow:0 8px 28px rgba(15,23,42,.18);
 }
 `;
+
+  // ── 页面内轻提示 ──────────────────────────────────────
+
+  const TOAST_CSS = `
+:host { all: initial }
+* { box-sizing:border-box; font-family:-apple-system, "Segoe UI", "Microsoft YaHei", sans-serif }
+${THEME_VARS}
+.box {
+  position:fixed; right:16px; bottom:16px; z-index:2147483647;
+  display:flex; flex-direction:column; align-items:flex-end; gap:8px;
+  pointer-events:none; max-width:min(340px, calc(100vw - 32px));
+}
+.t {
+  display:flex; align-items:flex-start; gap:8px;
+  padding:9px 13px; border-radius:9px; border:1px solid var(--border);
+  background:var(--bg); box-shadow:var(--shadow); color:var(--fg);
+  font-size:12.5px; line-height:1.5; word-break:break-word;
+  animation:tin .16s ease-out;
+}
+.t .dot { flex:none; width:7px; height:7px; margin-top:5px; border-radius:50%; background:var(--accent) }
+.t.ok  { border-color:#2f9e68 } .t.ok .dot  { background:#2f9e68 }
+.t.err { border-color:#d3453b } .t.err .dot { background:#d3453b }
+.t.out { animation:tout .16s ease-in forwards }
+@keyframes tin  { from { opacity:0; transform:translateY(6px) } }
+@keyframes tout { to   { opacity:0; transform:translateY(4px) } }
+@media (prefers-reduced-motion: reduce) { .t, .t.out { animation:none } }
+`;
+
+  let toastHost = null;
+  let toastBox = null;
+
+  function notify(text, kind = '') {
+    console.info(`[下载路由] ${text}`);
+    if (!document.body) return;
+    if (!toastHost) {
+      toastHost = document.createElement('div');
+      toastHost.style.cssText = 'all:initial;position:fixed;z-index:2147483647;';
+      const shadow = toastHost.attachShadow({ mode: 'open' });
+      const style = document.createElement('style');
+      style.textContent = TOAST_CSS;
+      toastBox = document.createElement('div');
+      toastBox.className = 'box';
+      shadow.append(style, toastBox);
+      document.body.appendChild(toastHost);
+    }
+    if (CONFIG.theme !== 'auto') toastHost.setAttribute('data-theme', CONFIG.theme);
+
+    const el = document.createElement('div');
+    el.className = kind ? 't ' + kind : 't';
+    const dot = document.createElement('span');
+    dot.className = 'dot';
+    const tx = document.createElement('span');
+    tx.textContent = text;
+    el.append(dot, tx);
+    toastBox.appendChild(el);
+    while (toastBox.childElementCount > 3) toastBox.firstElementChild.remove();
+
+    setTimeout(() => {
+      el.classList.add('out');
+      setTimeout(() => el.remove(), 320);
+    }, kind === 'err' ? 5000 : 2600);
+  }
 
   // ── 右键菜单 ──────────────────────────────────────────
 
@@ -507,18 +562,25 @@ ${THEME_VARS}
 }
 .foot a { color:var(--accent); text-decoration:underline; text-underline-offset:2px; font-weight:500 }
 .foot a:hover { text-decoration-thickness:2px }
+.foot .star {
+  display:inline-flex; align-items:center; gap:5px;
+  margin-bottom:7px; padding:3px 10px; border-radius:999px;
+  border:1px solid var(--border); color:var(--fg);
+  font-size:11px; font-weight:500; text-decoration:none;
+  transition:border-color .15s, color .15s;
+}
+.foot .star:hover { border-color:var(--accent); color:var(--accent) }
+.foot .star svg { color:#e0a92e }
 `;
 
   let panelHost = null;
-
-  /** 站点托管的图标，脚本和设置页都指向同一个 URL，保持一致 */
-  const ICON = 'https://mks155.github.io/assets/svg/downloadrouter.svg';
 
   function openSettings() {
     unmountCtx();
     if (panelHost) return unmountSettings();
 
     panelHost = document.createElement('div');
+    panelHost.style.cssText = 'all:initial;position:fixed;z-index:2147483645;';
     if (CONFIG.theme !== 'auto') panelHost.setAttribute('data-theme', CONFIG.theme);
     const shadow = panelHost.attachShadow({ mode: 'open' });
     const style = document.createElement('style');
@@ -533,13 +595,15 @@ ${THEME_VARS}
       if (e.target === backdrop) unmountSettings();
     });
     shadow.querySelector('#dr-close').addEventListener('click', unmountSettings);
+    shadow.querySelector('#dr-star').addEventListener('click', () => notify('已在新标签打开仓库，感谢 Star'));
     shadow.querySelector('#dr-save').addEventListener('click', () => {
       CONFIG.launchMethod = shadow.querySelector('#dr-method').value;
       CONFIG.theme = shadow.querySelector('#dr-theme').value;
       CONFIG.forceOnAlt = shadow.querySelector('#dr-alt').checked;
-      saveConfig();
+      const ok = saveConfig();
       unmountSettings();
       registerMenus();
+      notify(ok ? '设置已保存' : '保存失败，请检查脚本存储权限', ok ? 'ok' : 'err');
     });
     return undefined;
   }
@@ -567,8 +631,8 @@ ${THEME_VARS}
     return `<div class="backdrop">
   <div class="panel">
     <div class="hd">
-      <img class="logo" src="${ICON}" alt="">
-      <b>下载路由</b><span class="v">v${esc(VERSION)}</span>
+      <img class="logo" src="${esc(META.icon || '')}" alt="">
+      <b>下载路由</b><span class="v">v${esc(META.version || '')}</span>
     </div>
 
     <div class="field">
@@ -598,7 +662,8 @@ ${THEME_VARS}
     </div>
 
     <div class="foot">
-      Powered by <a href="https://mks155.github.io/" target="_blank" rel="noopener">mks155</a>
+      <a class="star" id="dr-star" href="https://github.com/mks155/DownloadRouter" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path fill="currentColor" d="M8 .3l2.06 4.18 4.61.67-3.33 3.25.78 4.6L8 10.79 3.88 12.99l.79-4.6L1.33 5.15l4.61-.67z"/></svg>欢迎 Star</a>
+      <div>Powered by <a href="https://mks155.github.io/" target="_blank" rel="noopener">mks155</a></div>
     </div>
   </div>
 </div>`;
@@ -666,7 +731,7 @@ ${THEME_VARS}
   registerMenus();
 
   window.__downloadRouter = {
-    HANDLERS, CONFIG, buildLink, parseLink, launch,
+    HANDLERS, CONFIG, META, buildLink, parseLink, launch,
     isDownloadLink, guessName, openSettings, selftest,
   };
 })();

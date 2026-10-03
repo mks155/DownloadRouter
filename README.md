@@ -3,7 +3,7 @@
 接管浏览器任意下载链接，快速调起分发给迅雷 / 比特彗星等客户端。识别漏网就按住 Alt+右键。 | Take over any download link in the browser, quickly launch and distribute it to clients such as Thunderbolt / BitComet. To identify any missed links, hold down Alt and right-click.
 
 [![GitHub stars](https://img.shields.io/github/stars/mks155/DownloadRouter?style=social)](https://github.com/mks155/DownloadRouter)
-[![MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/github/license/mks155/DownloadRouter)](https://github.com/mks155/DownloadRouter/blob/main/LICENSE)
 
 ## 链接
 
@@ -56,4 +56,4 @@
 
 ## License
 
-MIT
+[MIT](https://github.com/mks155/DownloadRouter/blob/main/LICENSE) © 2026 mks155
