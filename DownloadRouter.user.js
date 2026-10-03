@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name         下载路由 | Download Router
 // @namespace    https://github.com/mks155
-// @homepageURL  https://mks155.github.io
+// @homepageURL  https://github.com/mks155/DownloadRouter
 // @icon         https://mks155.github.io/assets/svg/downloadrouter.svg
 // @version      1.0.0
 // @description  接管浏览器任意下载链接，快速调起分发给迅雷 / 比特彗星等客户端。识别漏网就按住 Alt+右键。 | Take over any download link in the browser, quickly launch and distribute it to clients such as Thunderbolt / BitComet. To identify any missed links, hold down Alt and right-click.
@@ -511,21 +511,8 @@ ${THEME_VARS}
 
   let panelHost = null;
 
-  /** 懒生成：Blob URL 不在启动时创建，避免每页都付这个开销 */
-  let _logo;
-  function logo() {
-    if (!_logo) {
-      const svg =
-        "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'>" +
-        "<rect width='32' height='32' rx='7' fill='#2f6fed'/>" +
-        "<g fill='none' stroke='#fff' stroke-width='2.3' stroke-linecap='round' stroke-linejoin='round'>" +
-        "<path d='M4.5 8l8.5 8'/><path d='M27.5 8l-8.5 8'/><path d='M16 6.5v8.5'/>" +
-        "<path d='M16 14v9'/><path d='M11.5 19.5L16 24l4.5-4.5'/><path d='M8.5 27.5h15'/>" +
-        "</g></svg>";
-      _logo = URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' }));
-    }
-    return _logo;
-  }
+  /** 站点托管的图标，脚本和设置页都指向同一个 URL，保持一致 */
+  const ICON = 'https://mks155.github.io/assets/svg/downloadrouter.svg';
 
   function openSettings() {
     unmountCtx();
@@ -580,7 +567,7 @@ ${THEME_VARS}
     return `<div class="backdrop">
   <div class="panel">
     <div class="hd">
-      <img class="logo" src="${logo()}" alt="">
+      <img class="logo" src="${ICON}" alt="">
       <b>下载路由</b><span class="v">v${esc(VERSION)}</span>
     </div>
 
