@@ -3,7 +3,7 @@
 // @namespace    https://github.com/mks155
 // @homepageURL  https://github.com/mks155/DownloadRouter
 // @icon         https://mks155.github.io/assets/svg/downloadrouter.svg
-// @version      1.0.3
+// @version      1.0.4
 // @description  接管浏览器任意下载链接，快速调起分发给迅雷 / 比特彗星等客户端。识别漏网就按住 Alt+右键。 | Take over any download link in the browser, quickly launch and distribute it to clients such as Thunderbolt / BitComet. To identify any missed links, hold down Alt and right-click.
 // @author       mks155
 // @license      MIT
@@ -15,8 +15,6 @@
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @noframes
-// @updateURL    https://openuserjs.org/meta/mks155/%E4%B8%8B%E8%BD%BD%E8%B7%AF%E7%94%B1_Download_Router.meta.js
-// @downloadURL  https://openuserjs.org/install/mks155/%E4%B8%8B%E8%BD%BD%E8%B7%AF%E7%94%B1_Download_Router.user.js
 // ==/UserScript==
 
 (() => {
@@ -66,6 +64,21 @@
     } catch {
       return false;
     }
+  }
+
+  /** 内联 <style> 会被页面 CSP 的 style-src 拦掉，构造式样式表不受约束 */
+  function mountCss(shadow, css) {
+    try {
+      const sheet = new CSSStyleSheet();
+      sheet.replaceSync(css);
+      shadow.adoptedStyleSheets = [sheet];
+      return;
+    } catch {
+      /* 老内核退回 <style> */
+    }
+    const el = document.createElement('style');
+    el.textContent = css;
+    shadow.appendChild(el);
   }
 
   // ── Base64 ────────────────────────────────────────────
@@ -185,8 +198,21 @@
 
   const RE_ARCHIVE = /\.(?:zip|rar|7z|tar|gz|tgz|bz2|xz|zst|apk|ipa|exe|msi|msix|msu|appx|dmg|pkg|deb|rpm|iso|img|bin|vhd|vhdx|ova|ovf|cab|jar|war|torrent|magnet|ed2k)(?:$|[?#])/i;
   const RE_DOC = /\.(?:pdf|epub|mobi|djvu|docx?|xlsx?|pptx?|csv|txt|rtf|chm)(?:$|[?#])/i;
-  const RE_HINT = /[?&](?:download|dl|file|attachment|attach|filename)=|\/(?:download|downloads|down|dl|attachment|attachments|release[s]?\/download|files?)(?:[/?#]|$)/i;
+  /** dl / files / attachments 这类弱词必须再跟一段路径，否则 /product/file 这种商品页会误判 */
+  const RE_HINT =
+    /[?&](?:download|dl|file|attachment|attach|filename)=|\/(?:download|downloads)(?:[/?#]|$)|\/(?:dl|attachments?|files?)(?:\/|[?#])/i;
   const RE_SCHEME = /^(?:https?|ftp|magnet|ed2k|thunder):/i;
+  /** 这些站上 dl/files 是普通路径，启发式不可靠；但扩展名判断照旧，Release 里的 .zip 仍可接管 */
+  const HOST_SKIP =
+    /(^|\.)(?:wikipedia\.org|github\.com|gitlab\.com|gitee\.com|stackoverflow\.com|medium\.com|youtube\.com|bilibili\.com|zhihu\.com|weibo\.com|douban\.com|taobao\.com|jd\.com|amazon\.com|pinduoduo\.com)$/i;
+
+  const hostOf = (u) => {
+    try {
+      return new URL(u).hostname;
+    } catch {
+      return '';
+    }
+  };
 
   /** force=true 时跳过启发式判断，只看有没有下载器收得了 */
   function isDownloadLink(rawUrl, force = false) {
@@ -195,7 +221,9 @@
     if (!RE_SCHEME.test(url)) return false;
     if (force) return anyHandlerAccepts(url);
     if (/^(magnet|ed2k|thunder):/i.test(url)) return true;
-    return RE_ARCHIVE.test(url) || RE_DOC.test(url) || RE_HINT.test(url);
+    if (RE_ARCHIVE.test(url) || RE_DOC.test(url)) return true;
+    if (HOST_SKIP.test(hostOf(url))) return false;
+    return RE_HINT.test(url);
   }
 
   function guessName(rawUrl) {
@@ -321,11 +349,10 @@ ${THEME_VARS}
       toastHost = document.createElement('div');
       toastHost.style.cssText = 'all:initial;position:fixed;z-index:2147483647;';
       const shadow = toastHost.attachShadow({ mode: 'open' });
-      const style = document.createElement('style');
-      style.textContent = TOAST_CSS;
+      mountCss(shadow, TOAST_CSS);
       toastBox = document.createElement('div');
       toastBox.className = 'box';
-      shadow.append(style, toastBox);
+      shadow.appendChild(toastBox);
       document.body.appendChild(toastHost);
     }
     if (CONFIG.theme !== 'auto') toastHost.setAttribute('data-theme', CONFIG.theme);
@@ -423,11 +450,10 @@ ${THEME_VARS}
     ctxHost.style.cssText = 'all:initial;position:fixed;z-index:2147483647;';
     if (CONFIG.theme !== 'auto') ctxHost.setAttribute('data-theme', CONFIG.theme);
     const shadow = ctxHost.attachShadow({ mode: 'open' });
-    const style = document.createElement('style');
-    style.textContent = CTX_CSS;
+    mountCss(shadow, CTX_CSS);
     const wrap = document.createElement('div');
     wrap.innerHTML = html;
-    shadow.append(style, wrap);
+    shadow.appendChild(wrap);
     ctxHost.addEventListener('click', onCtxClick);
     (document.body || document.documentElement).appendChild(ctxHost);
 
@@ -474,7 +500,8 @@ ${THEME_VARS}
   document.addEventListener(
     'contextmenu',
     (e) => {
-      const a = e.target.closest && e.target.closest('a[href], area[href]');
+      /** 事件穿出 Shadow DOM 后 e.target 被 retarget 成 host，只能走 composedPath */
+      const a = e.composedPath().find((el) => el instanceof Element && el.matches('a[href], area[href]'));
       const url = a ? safeHref(a) : '';
       const force = CONFIG.forceOnAlt && e.altKey;
       if (!url || !isDownloadLink(url, force)) return unmountCtx();
@@ -591,11 +618,10 @@ ${THEME_VARS}
     panelHost.style.cssText = 'all:initial;position:fixed;z-index:2147483645;';
     if (CONFIG.theme !== 'auto') panelHost.setAttribute('data-theme', CONFIG.theme);
     const shadow = panelHost.attachShadow({ mode: 'open' });
-    const style = document.createElement('style');
-    style.textContent = PANEL_CSS;
+    mountCss(shadow, PANEL_CSS);
     const wrap = document.createElement('div');
     wrap.innerHTML = settingsHtml();
-    shadow.append(style, wrap);
+    shadow.appendChild(wrap);
     (document.body || document.documentElement).appendChild(panelHost);
 
     const backdrop = shadow.querySelector('.backdrop');

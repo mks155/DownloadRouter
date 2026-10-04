@@ -1,14 +1,26 @@
-# 下载路由 | DownloadRouter
+<div align="center">
+  <img src="https://mks155.github.io/assets/svg/downloadrouter.svg" alt="下载路由" width="76" height="76">
+  <h1>下载路由 | DownloadRouter</h1>
+  <p>接管浏览器任意下载链接，快速调起分发给迅雷 / 比特彗星等客户端<br>识别漏网就按住 <b>Alt</b> + 右键</p>
+  <p><sub>Take over any download link in the browser, quickly launch and distribute it to clients such as Thunderbolt / BitComet.</sub></p>
+  <p>
+    <a href="https://scriptcat.org/"><img src="https://img.shields.io/badge/ScriptCat-2f6fed?label=%E9%A6%96%E9%80%89" alt="脚本猫 ScriptCat（首选）"></a>
+    <a href="https://www.tampermonkey.net/"><img src="https://img.shields.io/badge/Tampermonkey-42a5f5" alt="Tampermonkey"></a>
+    <a href="https://violentmonkey.github.io/"><img src="https://img.shields.io/badge/Violentmonkey-185ABD" alt="Violentmonkey"></a>
+  </p>
+  <p>
+    <a href="https://github.com/mks155/DownloadRouter"><img src="https://img.shields.io/github/stars/mks155/DownloadRouter?style=social" alt="GitHub Stars"></a>
+    <a href="https://github.com/mks155/DownloadRouter/blob/main/LICENSE"><img src="https://img.shields.io/github/license/mks155/DownloadRouter" alt="MIT License"></a>
+  </p>
+</div>
 
-接管浏览器任意下载链接，快速调起分发给迅雷 / 比特彗星等客户端。识别漏网就按住 Alt+右键。 | Take over any download link in the browser, quickly launch and distribute it to clients such as Thunderbolt / BitComet. To identify any missed links, hold down Alt and right-click.
-
-[![GitHub stars](https://img.shields.io/github/stars/mks155/DownloadRouter?style=social)](https://github.com/mks155/DownloadRouter)
-[![License: MIT](https://img.shields.io/github/license/mks155/DownloadRouter)](https://github.com/mks155/DownloadRouter/blob/main/LICENSE)
+---
 
 ## 链接
 
-- [作者主页](https://mks155.github.io)
-- [GitHub 仓库](https://github.com/mks155/DownloadRouter) — 欢迎 Star，反馈请提 [Issue](https://github.com/mks155/DownloadRouter/issues)
+- [作者主页](https://mks155.github.io) — 查看作者其他脚本
+- [GitHub 仓库](https://github.com/mks155/DownloadRouter) — 欢迎 [Star](https://github.com/mks155/DownloadRouter)，反馈请提 [Issue](https://github.com/mks155/DownloadRouter/issues)
+- **[脚本猫 ScriptCat](https://scriptcat.org/zh-CN/script-show-page/8253)** — 首选推荐
 - [Greasy Fork 安装页](https://greasyfork.org/zh-CN/scripts/598571-%E4%B8%8B%E8%BD%BD%E8%B7%AF%E7%94%B1-download-router)
 - [OpenUserJS 安装页](https://openuserjs.org/scripts/mks155/%E4%B8%8B%E8%BD%BD%E8%B7%AF%E7%94%B1_Download_Router)
 
@@ -20,11 +32,18 @@
 - **识别兜底**：按住 <kbd>Alt</kbd> + 右键可跳过识别，对任意链接强制唤起
 - **深浅色自适应**：默认跟随系统，也可在设置里锁定
 - **零常驻侵入**：页面里不留任何常驻元素，右键菜单按需创建、用完即焚
+- **严格 CSP 兼容**：样式走构造式样式表，不受页面 `style-src` 限制
+
+## 效果
+
+![在下载链接上右键，弹出的自定义菜单](docs/screenshot.png)
+
+菜单只有下载器、复制链接和设置，浏览器自带的那些花里胡哨项全没了。
 
 ## 安装
 
-1. 安装 [Tampermonkey](https://www.tampermonkey.net/) 或 Violentmonkey
-2. 导入本仓库的 `DownloadRouter.user.js`
+1. 装一个脚本管理器，**首选 [脚本猫 ScriptCat](https://scriptcat.org/)**，也兼容 [Tampermonkey](https://www.tampermonkey.net/) 和 [Violentmonkey](https://violentmonkey.github.io/)
+2. 从脚本猫安装页一键装，或手动导入本仓库的 `DownloadRouter.user.js`
 3. 打开任意网页，右键一个下载链接
 
 ## 怎么设置
