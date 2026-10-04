@@ -75,4 +75,4 @@
 
 ## License
 
-[MIT](https://github.com/mks155/DownloadRouter/blob/main/LICENSE) © 2026 mks155
+[MIT](https://github.com/mks155/DownloadRouter/blob/main/LICENSE) © 2026 [mks155](https://mks155.github.io)
