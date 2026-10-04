@@ -36,7 +36,7 @@
 
 ## 效果
 
-![在下载链接上右键，弹出的自定义菜单](docs/screenshot.png)
+![在下载链接上右键，弹出的自定义菜单](https://raw.githubusercontent.com/mks155/DownloadRouter/main/docs/screenshot.png)
 
 菜单只有下载器、复制链接和设置，浏览器自带的那些花里胡哨项全没了。
 
