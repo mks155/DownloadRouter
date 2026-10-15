@@ -10,7 +10,7 @@
   </p>
   <p>
     <a href="https://github.com/mks155/DownloadRouter"><img src="https://img.shields.io/github/stars/mks155/DownloadRouter?style=social" alt="GitHub Stars"></a>
-    <a href="https://github.com/mks155/DownloadRouter/blob/main/LICENSE"><img src="https://img.shields.io/github/license/mks155/DownloadRouter" alt="MIT License"></a>
+    <a href="https://github.com/mks155/DownloadRouter/blob/main/LICENSE"><img src="https://img.shields.io/github/license/mks155/DownloadRouter" alt="Apache-2.0 License"></a>
   </p>
 </div>
 
@@ -42,7 +42,7 @@
 
 ## 安装
 
-1. 装一个脚本管理器，**首选 [脚本猫 ScriptCat](https://scriptcat.org/)**，也兼容 [Tampermonkey](https://www.tampermonkey.net/) 和 [Violentmonkey](https://violentmonkey.github.io/)
+1. 装一个脚本管理器，**首选 [Tampermonkey](https://www.tampermonkey.net/)**，也兼容 [脚本猫 ScriptCat](https://scriptcat.org/) 和 [Violentmonkey](https://violentmonkey.github.io/)
 2. 从脚本猫安装页一键装，或手动导入本仓库的 `DownloadRouter.user.js`
 3. 打开任意网页，右键一个下载链接
 
@@ -75,4 +75,4 @@
 
 ## License
 
-[MIT](https://github.com/mks155/DownloadRouter/blob/main/LICENSE) © 2026 [mks155](https://mks155.github.io)
+[Apache-2.0](https://raw.githubusercontent.com/mks155/DownloadRouter/refs/heads/main/LICENSE) © 2026 [mks155](https://mks155.github.io)

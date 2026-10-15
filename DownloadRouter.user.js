@@ -1,12 +1,12 @@
-﻿// ==UserScript==
+// ==UserScript==
 // @name         下载路由 | Download Router
 // @namespace    https://github.com/mks155
 // @homepageURL  https://github.com/mks155/DownloadRouter
-// @icon         https://mks155.github.io/assets/svg/downloadrouter.svg
-// @version      1.0.4
+// @icon         https://raw.githubusercontent.com/mks155/DownloadRouter/refs/heads/main/docs/icon.svg
+// @version      1.0.5
 // @description  接管浏览器任意下载链接，快速调起分发给迅雷 / 比特彗星等客户端。识别漏网就按住 Alt+右键。 | Take over any download link in the browser, quickly launch and distribute it to clients such as Thunderbolt / BitComet. To identify any missed links, hold down Alt and right-click.
 // @author       mks155
-// @license      MIT
+// @license      Apache-2.0
 // @match        *://*/*
 // @run-at       document-idle
 // @sandbox      raw
