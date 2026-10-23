@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://mks155.github.io/assets/svg/downloadrouter.svg" alt="下载路由" width="76" height="76">
+  <img src="https://raw.githubusercontent.com/mks155/DownloadRouter/refs/heads/main/docs/icon.svg" alt="下载路由" width="76" height="76">
   <h1>下载路由 | DownloadRouter</h1>
   <p>接管浏览器任意下载链接，快速调起分发给迅雷 / 比特彗星等客户端<br>识别漏网就按住 <b>Alt</b> + 右键</p>
   <p><sub>Take over any download link in the browser, quickly launch and distribute it to clients such as Thunderbolt / BitComet.</sub></p>
@@ -20,7 +20,7 @@
 
 - [作者主页](https://mks155.github.io) — 查看作者其他脚本
 - [GitHub 仓库](https://github.com/mks155/DownloadRouter) — 欢迎 [Star](https://github.com/mks155/DownloadRouter)，反馈请提 [Issue](https://github.com/mks155/DownloadRouter/issues)
-- **[脚本猫 ScriptCat](https://scriptcat.org/zh-CN/script-show-page/8253)** — 首选推荐
+- **[ScriptCat 安装页](https://scriptcat.org/zh-CN/script-show-page/8253)** — 首选推荐
 - [Greasy Fork 安装页](https://greasyfork.org/zh-CN/scripts/598571-%E4%B8%8B%E8%BD%BD%E8%B7%AF%E7%94%B1-download-router)
 - ~~[OpenUserJS 安装页](https://openuserjs.org/scripts/mks155/%E4%B8%8B%E8%BD%BD%E8%B7%AF%E7%94%B1_Download_Router)~~
 
